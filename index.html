@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>消耗品 購入申請フォーム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:     #1565c0;
+    --primary-dk:  #0d47a1;
+    --primary-lt:  #1976d2;
+    --accent:      #e53935;
+    --accent-soft: #fff5f5;
+    --sky:         #e3f0fb;
+    --sky2:        #b3cde8;
+    --bg:          #f0f6fc;
+    --white:       #ffffff;
+    --border:      #b3cde8;
+    --ink:         #0d2540;
+    --ink-light:   #3a5a7c;
+    --success:     #2e7d32;
+    --row-even:    #f5faff;
+    --row-odd:     #eef5fc;
+    --shadow:      0 2px 12px rgba(21,101,192,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', 'BIZ UDGothic', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ===== HEADER ===== */
+  .site-header {
+    background: linear-gradient(135deg, var(--primary-dk) 0%, var(--primary-lt) 100%);
+    color: var(--white);
+    padding: 0 32px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    border-bottom: 4px solid var(--sky2);
+    box-shadow: 0 3px 16px rgba(13,71,161,0.18);
+  }
+  .header-left { display: flex; align-items: stretch; }
+  .header-accent {
+    background: rgba(255,255,255,0.35);
+    width: 7px; margin-right: 22px;
+    border-radius: 0 3px 3px 0;
+  }
+  .header-content { padding: 22px 0; }
+  .header-title { font-size: 22px; font-weight: 700; letter-spacing: 0.06em; }
+  .header-facility {
+    display: flex; align-items: flex-end;
+    padding-bottom: 18px;
+    font-size: 13px; font-weight: 500;
+    opacity: 0.82; letter-spacing: 0.04em; white-space: nowrap;
+  }
+
+  /* ===== MAIN ===== */
+  .container {
+    max-width: 1400px;
+    margin: 28px auto;
+    padding: 0 24px;
+  }
+
+  /* ===== SECTION ===== */
+  .section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .section-head {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-lt) 100%);
+    color: var(--white);
+    padding: 9px 20px;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.08em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-head .num {
+    background: rgba(255,255,255,0.25);
+    border: 1.5px solid rgba(255,255,255,0.6);
+    color: var(--white);
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .section-body { padding: 16px 22px; }
+
+  /* ===== FORM ROW ===== */
+  .form-row { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .form-row .field      { flex: 1; min-width: 140px; }
+  .form-row .field.w2   { flex: 2; min-width: 200px; }
+  .form-row .field.w3   { flex: 3; min-width: 240px; }
+
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.07em; color: var(--ink-light);
+    text-transform: uppercase;
+  }
+  .field label .required { color: var(--accent); margin-left: 3px; }
+  .field input, .field textarea, .field select {
+    border: 1.5px solid var(--border); border-radius: 4px;
+    padding: 8px 11px; font-family: inherit; font-size: 14px;
+    color: var(--ink); background: var(--bg);
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    width: 100%;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    outline: none; border-color: var(--primary);
+    background: var(--white); box-shadow: 0 0 0 3px rgba(21,101,192,0.12);
+  }
+  .field input.error, .field textarea.error, .field select.error {
+    border-color: var(--accent); background: var(--accent-soft);
+  }
+  .field .err-msg { font-size: 11px; color: var(--accent); display: none; }
+  .field input.error ~ .err-msg,
+  .field textarea.error ~ .err-msg,
+  .field select.error ~ .err-msg { display: block; }
+  .field textarea { resize: vertical; min-height: 62px; }
+
+  /* ===== BUDGET RADIO ===== */
+  .budget-wrap { display: flex; flex-direction: column; gap: 4px; min-width: 200px; }
+  .budget-label-top {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.07em; color: var(--ink-light);
+    text-transform: uppercase;
+  }
+  .budget-label-top .required { color: var(--accent); margin-left: 3px; }
+  .budget-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .budget-group label {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 13px; font-weight: 500; color: var(--ink);
+    cursor: pointer; padding: 8px 14px;
+    border: 1.5px solid var(--border); border-radius: 5px;
+    background: var(--bg);
+    transition: border-color 0.12s, background 0.12s;
+    user-select: none; white-space: nowrap;
+  }
+  .budget-group label:hover { border-color: var(--primary); background: var(--sky); }
+  .budget-group input[type="radio"] { accent-color: var(--primary); width: 14px; height: 14px; }
+  .budget-group label.selected { border-color: var(--primary); background: var(--sky); color: var(--primary-dk); font-weight: 700; }
+  .budget-error { font-size: 11px; color: var(--accent); display: none; }
+  .budget-error.show { display: block; }
+
+  /* ===== ITEMS TABLE ===== */
+  .items-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px; margin-bottom: 12px;
+    table-layout: fixed;
+  }
+  .items-table thead tr {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-lt) 100%);
+    color: var(--white);
+  }
+  .items-table th {
+    padding: 8px 8px; text-align: left;
+    font-weight: 700; font-size: 11px; letter-spacing: 0.03em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .items-table th.center { text-align: center; }
+  .items-table tbody tr:nth-child(even) { background: var(--row-even); }
+  .items-table tbody tr:nth-child(odd)  { background: var(--row-odd); }
+  .items-table tbody tr:hover { background: var(--sky); }
+  .items-table td { padding: 5px 5px; vertical-align: top; }
+
+  .items-table td input, .items-table td textarea {
+    border: 1.5px solid var(--border); border-radius: 3px;
+    padding: 5px 7px; font-family: inherit; font-size: 13px;
+    width: 100%; background: transparent;
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .items-table td input:focus, .items-table td textarea:focus {
+    outline: none; border-color: var(--primary); background: var(--white);
+    box-shadow: 0 0 0 2px rgba(21,101,192,0.10);
+  }
+  .items-table td input.error,
+  .items-table td textarea.error { border-color: var(--accent); background: var(--accent-soft); }
+  .items-table td textarea { resize: vertical; min-height: 34px; line-height: 1.45; }
+
+  /* column widths */
+  .col-no   { width: 38px; text-align: center; }
+  .col-name { width: 16%; }
+  .col-qty  { width: 60px; text-align: center; }
+  .col-unit { width: 105px; }
+  .col-sub  { width: 95px; text-align: right; }
+  .col-note { width: 20%; }
+  .col-url  { width: 24%; }
+  .col-del  { width: 34px; }
+
+  .subtotal-cell {
+    font-weight: 700; padding-right: 8px;
+    color: var(--ink); font-size: 13px;
+    white-space: nowrap; text-align: right;
+    display: block; padding-top: 7px;
+  }
+
+  .url-cell-wrap { display: flex; flex-direction: column; gap: 2px; }
+  .url-cell-wrap input { font-size: 12px; }
+  .url-preview {
+    font-size: 11px; color: var(--primary);
+    text-decoration: underline; cursor: pointer;
+    overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; display: none;
+  }
+  .url-preview:hover { color: var(--primary-dk); }
+
+  .btn-del {
+    background: none; border: 1.5px solid var(--border);
+    border-radius: 3px; color: var(--ink-light);
+    cursor: pointer; width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; margin: 2px auto 0;
+    transition: border-color 0.12s, color 0.12s, background 0.12s;
+  }
+  .btn-del:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  /* ===== TABLE FOOTER ===== */
+  .table-footer {
+    display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    margin-top: 4px;
+  }
+  .btn-add {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 16px; background: var(--primary);
+    color: var(--white); border: none; border-radius: 4px;
+    font-family: inherit; font-size: 13px; font-weight: 700;
+    cursor: pointer; letter-spacing: 0.04em;
+    transition: background 0.15s;
+    box-shadow: 0 2px 6px rgba(21,101,192,0.18);
+  }
+  .btn-add:hover { background: var(--primary-dk); }
+
+  .total-display {
+    display: flex; align-items: baseline; gap: 10px;
+    background: var(--sky); border: 1.5px solid var(--sky2);
+    border-radius: 6px; padding: 7px 18px;
+  }
+  .total-label { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--primary); }
+  .total-amount { font-size: 24px; font-weight: 700; color: var(--primary-dk); }
+  .total-unit { font-size: 13px; color: var(--ink-light); }
+
+  /* ===== SUBMIT ===== */
+  .submit-area {
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    padding: 28px 24px; background: var(--white);
+    border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow);
+  }
+  .submit-btn-row {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
+  }
+  .btn-submit {
+    padding: 13px 52px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-lt) 100%);
+    color: var(--white); border: none; border-radius: 4px;
+    font-family: inherit; font-size: 15px; font-weight: 700;
+    letter-spacing: 0.12em; cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    box-shadow: 0 4px 14px rgba(21,101,192,0.30); min-width: 200px;
+  }
+  .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit:disabled { background: var(--border); color: #999; box-shadow: none; cursor: not-allowed; }
+  .btn-check-inline {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 11px 22px;
+    background: var(--white); color: var(--ink-light);
+    border: 1.5px solid var(--border); border-radius: 4px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    text-decoration: none; white-space: nowrap;
+    transition: border-color 0.12s, color 0.12s, background 0.12s;
+  }
+  .btn-check-inline:hover { border-color: var(--primary); color: var(--primary); background: var(--sky); }
+  .submit-notices {
+    display: flex; flex-direction: column; gap: 6px;
+    border-left: 3px solid var(--sky2); padding-left: 14px;
+    max-width: 600px;
+  }
+  .submit-notice { font-size: 13px; color: var(--ink-light); line-height: 1.65; }
+  .submit-note { font-size: 12px; color: var(--ink-light); opacity: 0.7; }
+
+  /* ===== MODAL ===== */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(13,37,64,0.55); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .overlay.show { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 8px;
+    padding: 40px 48px; text-align: center;
+    max-width: 420px; width: 90%;
+    box-shadow: 0 8px 40px rgba(13,71,161,0.22);
+    animation: popIn 0.25s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.88) translateY(12px); opacity: 0; }
+    to   { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .modal-icon {
+    width: 64px; height: 64px; background: var(--success);
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; margin: 0 auto 18px;
+    font-size: 32px; color: white;
+  }
+  .modal h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .modal p { font-size: 13px; color: var(--ink-light); margin-bottom: 6px; }
+  .modal .req-id { font-size: 16px; font-weight: 700; color: var(--primary-dk); letter-spacing: 0.06em; }
+  .modal-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+  .btn-check-sheet {
+    display: block; padding: 11px 24px;
+    background: var(--sky); color: var(--primary-dk);
+    border: 2px solid var(--primary); border-radius: 4px;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    text-decoration: none; cursor: pointer; transition: background 0.12s;
+  }
+  .btn-check-sheet:hover { background: var(--sky2); }
+  .btn-close-modal {
+    padding: 11px 24px; background: var(--primary);
+    color: var(--white); border: none; border-radius: 4px;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background 0.12s;
+  }
+  .btn-close-modal:hover { background: var(--primary-dk); }
+
+  .spinner {
+    display: none; width: 22px; height: 22px;
+    border: 3px solid rgba(255,255,255,0.4);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.7s linear infinite; margin: 0 auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-submit.loading .btn-label { display: none; }
+  .btn-submit.loading .spinner { display: block; }
+
+  .error-box {
+    display: none; background: var(--accent-soft);
+    border: 1.5px solid var(--accent); border-radius: 4px;
+    padding: 10px 14px; font-size: 13px; color: var(--accent);
+    width: 100%; text-align: left;
+  }
+  .error-box.show { display: block; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <div class="header-accent"></div>
+    <div class="header-content">
+      <div class="header-title">消耗品　購入申請フォーム</div>
+    </div>
+  </div>
+  <div class="header-facility">新田東総合運動場</div>
+</header>
+
+<div class="container">
+
+  <!-- SECTION 1: 申請者 -->
+  <div class="section">
+    <div class="section-head"><span class="num">1</span> 申請者</div>
+    <div class="section-body">
+      <div class="form-row">
+        <div class="field">
+          <label>申請者名 <span class="required">*</span></label>
+          <input type="text" id="applicantName" placeholder="例: 新田 太郎">
+          <span class="err-msg">申請者名を入力してください</span>
+        </div>
+        <div class="field">
+          <label>班名 <span class="required">*</span></label>
+          <select id="department">
+            <option value="">― 選択してください ―</option>
+            <option value="管理班">管理班</option>
+            <option value="指導班">指導班</option>
+            <option value="プール班">プール班</option>
+            <option value="野球場班">野球場班</option>
+          </select>
+          <span class="err-msg">班名を選択してください</span>
+        </div>
+        <div class="field w2">
+          <label>用途・理由 <span class="required">*</span></label>
+          <textarea id="purpose" rows="2" placeholder="例: 事務所内で使用するコピー用紙が在庫切れになったため、補充購入する。"></textarea>
+          <span class="err-msg">用途・理由を入力してください</span>
+        </div>
+        <div class="budget-wrap">
+          <span class="budget-label-top">予算科目 <span class="required">*</span></span>
+          <div class="budget-group" id="budgetGroup">
+            <label>
+              <input type="radio" name="budget" value="施設管理運営事業費" onchange="updateBudgetStyle()">
+              施設管理運営事業費
+            </label>
+            <label>
+              <input type="radio" name="budget" value="スポーツ振興事業費" onchange="updateBudgetStyle()">
+              スポーツ振興事業費
+            </label>
+          </div>
+          <div class="budget-error" id="budgetError">予算科目を選択してください</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: 品目一覧 -->
+  <div class="section">
+    <div class="section-head"><span class="num">2</span> 購入品目一覧</div>
+    <div class="section-body">
+      <div style="overflow-x:auto;">
+        <table class="items-table" id="itemsTable">
+          <thead>
+            <tr>
+              <th class="col-no center">No.</th>
+              <th class="col-name">品目名 <span style="opacity:0.75">*</span></th>
+              <th class="col-qty center">数量 <span style="opacity:0.75">*</span></th>
+              <th class="col-unit">税込単価（円） <span style="opacity:0.75">*</span></th>
+              <th class="col-sub" style="text-align:right;padding-right:8px;">小計（円）</th>
+              <th class="col-note">備考（品名・型番等） <span style="opacity:0.75">*</span></th>
+              <th class="col-url">参考URL</th>
+              <th class="col-del"></th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody"></tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <button class="btn-add" onclick="addRow()">＋ 品目を追加</button>
+        <div class="total-display">
+          <span class="total-label">合計金額</span>
+          <span class="total-amount" id="totalAmount">0</span>
+          <span class="total-unit">円</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-area">
+    <div class="error-box" id="globalError"></div>
+    <div class="submit-btn-row">
+      <button class="btn-submit" id="submitBtn" onclick="submitForm()">
+        <span class="btn-label">申請を送信する</span>
+        <div class="spinner"></div>
+      </button>
+      <a class="btn-check-inline"
+         href="https://docs.google.com/spreadsheets/d/1hJAEuRcd7ODMpSsnGISsGBLTSEgwqcezaFKCb0fAFeY/edit?gid=491814017#gid=491814017"
+         target="_blank" rel="noopener">📋　承認を確認する</a>
+      <div class="submit-notices">
+        <p class="submit-notice">⚠️ 申請の都度発注すると係員の負担が大きいため、一定期間分をまとめて発注します。ご協力ください（締日は毎月15日・25日）。<br>※購入を急ぐ物品は、その旨を「購入理由」欄に記載してください。</p>
+        <p class="submit-notice">⚠️ 野球場と温水プールは、係が集約して申請してください。</p>
+      </div>
+    </div>
+    <p class="submit-note">送信後、スプレッドシートに自動で記録されます</p>
+  </div>
+
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="overlay" id="successOverlay">
+  <div class="modal">
+    <div class="modal-icon">✓</div>
+    <h2>申請が完了しました</h2>
+    <p style="margin-top:8px;">申請番号</p>
+    <div class="req-id" id="modalReqId">—</div>
+    <p style="margin-top:16px;">スプレッドシートへの記録が完了しました。</p>
+    <div class="modal-buttons">
+      <a class="btn-check-sheet"
+         href="https://docs.google.com/spreadsheets/d/1hJAEuRcd7ODMpSsnGISsGBLTSEgwqcezaFKCb0fAFeY/edit?gid=491814017#gid=491814017"
+         target="_blank" rel="noopener">📋　承認を確認する</a>
+      <button class="btn-close-modal" onclick="closeModal()">新しい申請を作成</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ★ GAS WebアプリのURLをここに設定してください
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby6lVowHhFHoyFX_jPyHA2CdpYuvjBQRAbPEI_SrpDEn3kSqY284PMT13RTserOmSr9SA/exec'; // ← 変更必須
+// ============================================================
+
+let rowCount = 0;
+
+window.addEventListener('DOMContentLoaded', () => {
+  addRow(); addRow(); addRow();
+});
+
+/* ---------- 予算科目 ---------- */
+function updateBudgetStyle() {
+  document.querySelectorAll('.budget-group label').forEach(lbl => {
+    lbl.classList.toggle('selected', lbl.querySelector('input').checked);
+  });
+  document.getElementById('budgetError').classList.remove('show');
+}
+
+/* ---------- 品目行追加 ---------- */
+function addRow() {
+  rowCount++;
+  const n = rowCount;
+  const tr = document.createElement('tr');
+  tr.id = 'row-' + n;
+  tr.innerHTML = `
+    <td class="col-no" style="text-align:center;padding-top:7px;font-weight:700;color:var(--ink-light);">${n}</td>
+    <td class="col-name">
+      <textarea id="name_${n}" rows="2" placeholder="例: コピー用紙 A4"></textarea>
+    </td>
+    <td class="col-qty" style="text-align:center;">
+      <input type="text" id="qty_${n}" placeholder="1" inputmode="numeric"
+        oninput="validateNum(this); calcRow(${n})">
+    </td>
+    <td class="col-unit">
+      <input type="text" id="unit_${n}" placeholder="1000" inputmode="numeric"
+        oninput="validateNum(this); calcRow(${n})">
+    </td>
+    <td class="col-sub">
+      <span class="subtotal-cell" id="sub_${n}">—</span>
+    </td>
+    <td class="col-note">
+      <textarea id="note_${n}" rows="2" placeholder="例: ○○メーカー 品番XX-123"></textarea>
+    </td>
+    <td class="col-url">
+      <div class="url-cell-wrap">
+        <input type="url" id="url_${n}" placeholder="https://"
+          oninput="updateUrlPreview(${n})" onpaste="setTimeout(()=>updateUrlPreview(${n}),50)">
+        <span class="url-preview" id="urlprev_${n}" onclick="openUrl(${n})"></span>
+      </div>
+    </td>
+    <td class="col-del">
+      <button class="btn-del" onclick="delRow(${n})" title="削除">×</button>
+    </td>`;
+  document.getElementById('itemsBody').appendChild(tr);
+  document.getElementById('name_' + n).focus();
+}
+
+/* ---------- URL プレビュー ---------- */
+function updateUrlPreview(n) {
+  const val  = document.getElementById('url_' + n)?.value.trim();
+  const prev = document.getElementById('urlprev_' + n);
+  if (!prev) return;
+  if (val && (val.startsWith('http://') || val.startsWith('https://'))) {
+    prev.textContent = val.length > 45 ? val.slice(0,45) + '…' : val;
+    prev.style.display = 'block';
+  } else {
+    prev.style.display = 'none';
+  }
+}
+function openUrl(n) {
+  const val = document.getElementById('url_' + n)?.value.trim();
+  if (val) window.open(val, '_blank', 'noopener');
+}
+
+/* ---------- 行削除 ---------- */
+function delRow(n) {
+  if (document.querySelectorAll('#itemsBody tr').length <= 1) {
+    alert('品目は最低1件必要です。'); return;
+  }
+  document.getElementById('row-' + n).remove();
+  calcTotal();
+  document.querySelectorAll('#itemsBody tr').forEach((tr, i) => {
+    tr.querySelector('td:first-child').textContent = i + 1;
+  });
+}
+
+/* ---------- 数値バリデーション ---------- */
+function validateNum(input) {
+  const cleaned = input.value
+    .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+    .replace(/[^0-9]/g, '');
+  input.value = cleaned;
+  input.classList.toggle('error', !cleaned || Number(cleaned) <= 0);
+}
+
+/* ---------- 小計・合計 ---------- */
+function calcRow(n) {
+  const qty  = parseInt(document.getElementById('qty_'  + n)?.value) || 0;
+  const unit = parseInt(document.getElementById('unit_' + n)?.value) || 0;
+  const sub  = qty * unit;
+  const cell = document.getElementById('sub_' + n);
+  if (cell) cell.textContent = sub > 0 ? sub.toLocaleString() + ' 円' : '—';
+  calcTotal();
+}
+function calcTotal() {
+  let total = 0;
+  document.querySelectorAll('#itemsBody tr').forEach(tr => {
+    const id   = tr.id.replace('row-', '');
+    const qty  = parseInt(document.getElementById('qty_'  + id)?.value) || 0;
+    const unit = parseInt(document.getElementById('unit_' + id)?.value) || 0;
+    total += qty * unit;
+  });
+  document.getElementById('totalAmount').textContent = total.toLocaleString();
+}
+
+/* ---------- バリデーション ---------- */
+function validateForm() {
+  let valid = true;
+
+  ['applicantName', 'department', 'purpose'].forEach(id => {
+    const el = document.getElementById(id);
+    const ok = el.value.trim() !== '';
+    el.classList.toggle('error', !ok);
+    if (!ok) valid = false;
+  });
+
+  const budgetVal = document.querySelector('input[name="budget"]:checked')?.value;
+  if (!budgetVal) {
+    document.getElementById('budgetError').classList.add('show');
+    valid = false;
+  } else {
+    document.getElementById('budgetError').classList.remove('show');
+  }
+
+  let hasValidItem = false;
+  document.querySelectorAll('#itemsBody tr').forEach(tr => {
+    const id     = tr.id.replace('row-', '');
+    const nameEl = document.getElementById('name_' + id);
+    const qtyEl  = document.getElementById('qty_'  + id);
+    const unitEl = document.getElementById('unit_' + id);
+    const noteEl = document.getElementById('note_' + id);
+    const name = nameEl?.value.trim();
+    const qty  = qtyEl?.value.trim();
+    const unit = unitEl?.value.trim();
+    const note = noteEl?.value.trim();
+
+    if (!name && !qty && !unit && !note) return;
+
+    let rowOk = true;
+    if (!name) { nameEl.classList.add('error'); rowOk = false; valid = false; }
+    else nameEl.classList.remove('error');
+
+    if (!qty || !/^\d+$/.test(qty) || Number(qty) <= 0) {
+      qtyEl.classList.add('error'); rowOk = false; valid = false;
+    } else qtyEl.classList.remove('error');
+
+    if (!unit || !/^\d+$/.test(unit) || Number(unit) <= 0) {
+      unitEl.classList.add('error'); rowOk = false; valid = false;
+    } else unitEl.classList.remove('error');
+
+    if (!note) { noteEl.classList.add('error'); rowOk = false; valid = false; }
+    else noteEl.classList.remove('error');
+
+    if (rowOk) hasValidItem = true;
+  });
+
+  if (!hasValidItem) {
+    showError('品目を最低1件入力してください。数量・税込単価は半角数字、備考は必須です。');
+    valid = false;
+  }
+  return valid;
+}
+
+/* ---------- 送信 ---------- */
+function showError(msg) {
+  const box = document.getElementById('globalError');
+  box.textContent = msg; box.classList.add('show');
+}
+function clearError() {
+  document.getElementById('globalError').classList.remove('show');
+}
+
+function submitForm() {
+  clearError();
+  if (!validateForm()) {
+    document.querySelector('.error-box.show, input.error, textarea.error, select.error')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const items = [];
+  document.querySelectorAll('#itemsBody tr').forEach(tr => {
+    const id   = tr.id.replace('row-', '');
+    const name = document.getElementById('name_' + id)?.value.trim();
+    const qty  = document.getElementById('qty_'  + id)?.value.trim();
+    const unit = document.getElementById('unit_' + id)?.value.trim();
+    const note = document.getElementById('note_' + id)?.value.trim() || '';
+    const url  = document.getElementById('url_'  + id)?.value.trim() || '';
+    if (name && qty && unit) {
+      items.push({ name, quantity: qty, unitPrice: unit, note, url });
+    }
+  });
+
+  const totalText = document.getElementById('totalAmount').textContent.replace(/,/g, '');
+  const data = {
+    applicantName: document.getElementById('applicantName').value.trim(),
+    department:    document.getElementById('department').value,
+    budget:        document.querySelector('input[name="budget"]:checked').value,
+    purpose:       document.getElementById('purpose').value.trim(),
+    items,
+    totalAmount:   Number(totalText)
+  };
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  // GETリクエストでデータをクエリパラメータとして送信
+  const requestUrl = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(data));
+
+  fetch(requestUrl, { method: 'GET', mode: 'no-cors' })
+  .then(() => {
+    const reqId = 'REQ-' + new Date().toISOString().slice(0,10).replace(/-/g,'')
+                + '-' + String(Math.floor(Math.random()*9000)+1000);
+    showSuccess(reqId);
+  })
+  .catch(err => {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    showError('送信中にエラーが発生しました: ' + err.message);
+  });
+}
+
+function showSuccess(reqId) {
+  document.getElementById('modalReqId').textContent = reqId;
+  document.getElementById('successOverlay').classList.add('show');
+  document.getElementById('submitBtn').classList.remove('loading');
+}
+
+function closeModal() {
+  document.getElementById('successOverlay').classList.remove('show');
+  document.getElementById('applicantName').value = '';
+  document.getElementById('department').value = '';
+  document.getElementById('purpose').value = '';
+  document.querySelectorAll('input[name="budget"]').forEach(r => r.checked = false);
+  document.querySelectorAll('.budget-group label').forEach(l => l.classList.remove('selected'));
+  document.getElementById('itemsBody').innerHTML = '';
+  rowCount = 0;
+  addRow(); addRow(); addRow();
+  document.getElementById('totalAmount').textContent = '0';
+  document.getElementById('submitBtn').disabled = false;
+}
+</script>
+</body>
+</html>
