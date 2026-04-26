@@ -190,13 +190,22 @@
 
   /* column widths */
   .col-no   { width: 38px; text-align: center; }
-  .col-name { width: 16%; }
-  .col-qty  { width: 60px; text-align: center; }
-  .col-unit { width: 105px; }
-  .col-sub  { width: 95px; text-align: right; }
-  .col-note { width: 20%; }
-  .col-url  { width: 24%; }
+  .col-name { width: 14%; }
+  .col-qty  { width: 55px; text-align: center; }
+  .col-unit { width: 95px; }
+  .col-sub  { width: 85px; text-align: right; }
+  .col-note { width: 15%; }
+  .col-url  { width: 17%; }
+  .col-how  { width: 14%; }
   .col-del  { width: 34px; }
+  .col-how select {
+    border: 1.5px solid var(--border); border-radius: 3px;
+    padding: 5px 4px; font-family: inherit; font-size: 12px;
+    width: 100%; background: transparent; cursor: pointer;
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .col-how select:focus { outline: none; border-color: var(--primary); background: var(--white); }
+  .col-how select.error { border-color: var(--accent); background: var(--accent-soft); }
 
   .subtotal-cell {
     font-weight: 700; padding-right: 8px;
@@ -253,12 +262,9 @@
 
   /* ===== SUBMIT ===== */
   .submit-area {
-    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
     padding: 28px 24px; background: var(--white);
     border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow);
-  }
-  .submit-btn-row {
-    display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
   }
   .btn-submit {
     padding: 13px 52px;
@@ -272,10 +278,12 @@
   .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
   .btn-submit:active { transform: translateY(0); }
   .btn-submit:disabled { background: var(--border); color: #999; box-shadow: none; cursor: not-allowed; }
+  .submit-btn-row {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
+  }
   .btn-check-inline {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 11px 22px;
-    background: var(--white); color: var(--ink-light);
+    padding: 11px 22px; background: var(--white); color: var(--ink-light);
     border: 1.5px solid var(--border); border-radius: 4px;
     font-family: inherit; font-size: 13px; font-weight: 600;
     text-decoration: none; white-space: nowrap;
@@ -284,8 +292,7 @@
   .btn-check-inline:hover { border-color: var(--primary); color: var(--primary); background: var(--sky); }
   .submit-notices {
     display: flex; flex-direction: column; gap: 6px;
-    border-left: 3px solid var(--sky2); padding-left: 14px;
-    max-width: 600px;
+    border-left: 3px solid var(--sky2); padding-left: 14px; max-width: 600px;
   }
   .submit-notice { font-size: 13px; color: var(--ink-light); line-height: 1.65; }
   .submit-note { font-size: 12px; color: var(--ink-light); opacity: 0.7; }
@@ -380,7 +387,7 @@
         <div class="field">
           <label>班名 <span class="required">*</span></label>
           <select id="department">
-            <option value="">― 選択してください ―</option>
+            <option value="">― 選択 ―</option>
             <option value="管理班">管理班</option>
             <option value="指導班">指導班</option>
             <option value="庭球場">庭球場</option>
@@ -391,7 +398,7 @@
         </div>
         <div class="field w2">
           <label>用途・理由 <span class="required">*</span></label>
-          <textarea id="purpose" rows="2" placeholder="例: 事務所内で使用するコピー用紙が在庫切れになったため、補充購入する。"></textarea>
+          <textarea id="purpose" rows="2" placeholder="例: 事務室で使用するコピー用紙が在庫切れのため、補充で購入するため"></textarea>
           <span class="err-msg">用途・理由を入力してください</span>
         </div>
         <div class="budget-wrap">
@@ -427,6 +434,7 @@
               <th class="col-sub" style="text-align:right;padding-right:8px;">小計（円）</th>
               <th class="col-note">備考（品名・型番等） <span style="opacity:0.75">*</span></th>
               <th class="col-url">参考URL</th>
+              <th class="col-how">購入希望方法 <span style="opacity:0.75">*</span></th>
               <th class="col-del"></th>
             </tr>
           </thead>
@@ -453,10 +461,10 @@
         <div class="spinner"></div>
       </button>
       <a class="btn-check-inline"
-         href="https://docs.google.com/spreadsheets/d/1hJAEuRcd7ODMpSsnGISsGBLTSEgwqcezaFKCb0fAFeY/edit?gid=491814017#gid=491814017"
+         href="https://docs.google.com/spreadsheets/d/1hJAEuRcd7ODMpSsnGISsGBLTSEgwqcezaFKCb0fAFeY/edit"
          target="_blank" rel="noopener">📋　承認を確認する</a>
       <div class="submit-notices">
-        <p class="submit-notice">⚠️ 申請の都度発注すると係員の負担が大きいため、一定期間分をまとめて発注します。ご協力ください（締日は毎月15日・25日）。<br>※購入を急ぐ物品は、その旨を「購入理由」欄に記載してください。</p>
+        <p class="submit-notice">⚠️ 申請の都度発注すると係員の負担が大きいため、一定期間分をまとめて発注します。ご協力ください（締日は毎月末）。<br>※購入を急ぐ物品は、その旨を「購入理由」欄に記載してください。</p>
         <p class="submit-notice">⚠️ 弓道場は係員が代行して申請してください。</p>
       </div>
     </div>
@@ -534,6 +542,13 @@ function addRow() {
           oninput="updateUrlPreview(${n})" onpaste="setTimeout(()=>updateUrlPreview(${n}),50)">
         <span class="url-preview" id="urlprev_${n}" onclick="openUrl(${n})"></span>
       </div>
+    </td>
+    <td class="col-how">
+      <select id="how_${n}">
+        <option value="">― 選択 ―</option>
+        <option value="担当がWEBで購入">担当がWEBで購入</option>
+        <option value="依頼者が実店舗（ムサシ・ダイシン等）で購入">依頼者が実店舗で購入</option>
+      </select>
     </td>
     <td class="col-del">
       <button class="btn-del" onclick="delRow(${n})" title="削除">×</button>
@@ -648,6 +663,10 @@ function validateForm() {
     if (!note) { noteEl.classList.add('error'); rowOk = false; valid = false; }
     else noteEl.classList.remove('error');
 
+    const howEl = document.getElementById('how_' + id);
+    if (!howEl?.value) { howEl.classList.add('error'); rowOk = false; valid = false; }
+    else howEl.classList.remove('error');
+
     if (rowOk) hasValidItem = true;
   });
 
@@ -683,8 +702,9 @@ function submitForm() {
     const unit = document.getElementById('unit_' + id)?.value.trim();
     const note = document.getElementById('note_' + id)?.value.trim() || '';
     const url  = document.getElementById('url_'  + id)?.value.trim() || '';
+    const how  = document.getElementById('how_'  + id)?.value || '';
     if (name && qty && unit) {
-      items.push({ name, quantity: qty, unitPrice: unit, note, url });
+      items.push({ name, quantity: qty, unitPrice: unit, note, url, how });
     }
   });
 
